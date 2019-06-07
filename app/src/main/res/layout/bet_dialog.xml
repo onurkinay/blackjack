@@ -8,9 +8,9 @@
 
     <TextView android:layout_width="match_parent" android:layout_height="wrap_content" android:text="You have $10"/>
     <EditText
-            android:id="@+id/dialogNameEt"
+            android:id="@+id/dialogBetEt"
             android:hint="Enter you bet!"
-            android:inputType="textPersonName"
+            android:inputType="number"
             android:layout_width="match_parent"
             android:layout_height="wrap_content" />
 

@@ -18,6 +18,11 @@ class MainActivity : AppCompatActivity() {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_main)
 // Enter bet!!
+EnterBet()
+// !Enter bet
+    }
+
+    fun EnterBet() {
         val mDialogView = LayoutInflater.from(this).inflate(R.layout.bet_dialog, null)
         //AlertDialogBuilder
         val mBuilder = AlertDialog.Builder(this)
@@ -28,11 +33,15 @@ class MainActivity : AppCompatActivity() {
         //login button click of custom layout
         mDialogView.dialogLoginBtn.setOnClickListener {
             //dismiss dialog
-            mAlertDialog.dismiss()
-            //get text from EditTexts of custom layout
-            bet = mDialogView.dialogNameEt.text.toString().toInt()
-            dealer.text = bet.toString()
-            //set the input text in TextView
+            if (mDialogView.dialogBetEt.text.toString() != "") {
+                //get text from EditTexts of custom layout
+                bet = mDialogView.dialogBetEt.text.toString().toInt()
+                dealer.text = bet.toString()
+                //set the input text in TextView
+                mAlertDialog.dismiss()
+            }else{
+
+            }
 
         }
         //cancel button click of custom layout
@@ -40,7 +49,6 @@ class MainActivity : AppCompatActivity() {
             exitProcess(-1)
             mAlertDialog.dismiss()
         }
-// !Enter bet
     }
 
 }
