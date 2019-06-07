@@ -1,0 +1,102 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout
+        xmlns:android="http://schemas.android.com/apk/res/android"
+        xmlns:tools="http://schemas.android.com/tools"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        tools:context=".MainActivity">
+
+   <GridLayout android:layout_width="match_parent"
+               android:layout_height="match_parent"
+               android:columnCount="1"
+               android:rowCount="4">
+       <TextView
+               android:id="@+id/dealer"
+               android:text="Dealer's"
+               android:textSize="32dip"
+               android:layout_height="wrap_content"
+               android:layout_width="match_parent"
+               android:gravity="center|top"
+
+               android:padding="15dp"
+               android:layout_column="0"
+               android:layout_row="0"
+               />
+       <TextView
+               android:id="@+id/d_status"
+               android:text="status"
+               android:textSize="16dip"
+               android:layout_height="wrap_content"
+               android:layout_width="match_parent"
+               android:gravity="center|top"
+
+               android:padding="15dp"
+               android:layout_column="0"
+               android:layout_row="1"
+       />
+
+       <LinearLayout
+               android:layout_width="match_parent"
+               android:layout_height="wrap_content"
+               android:layout_gravity="center|bottom"
+               android:gravity="center"
+               android:orientation="vertical"
+               android:layout_row="0"
+               android:layout_rowSpan="4">
+           <TextView
+                   android:id="@+id/player"
+                   android:text="Player's"
+                   android:textSize="32dip"
+                   android:layout_height="wrap_content"
+                   android:layout_width="match_parent"
+                   android:layout_weight="0"
+                   android:gravity="bottom|center"
+                   android:padding="15dp"
+                   />
+           <TextView
+                   android:id="@+id/p_status"
+                   android:text="status"
+                   android:textSize="16dip"
+                   android:layout_height="wrap_content"
+                   android:layout_width="match_parent"
+                   android:layout_weight="0"
+                   android:gravity="bottom|center"
+                   android:padding="15dp"
+           />
+
+       <LinearLayout
+               android:layout_width="match_parent"
+               android:layout_height="wrap_content"
+               android:layout_gravity="center|bottom"
+               android:gravity="center"
+               android:orientation="horizontal"
+               android:layout_row="0"
+               android:layout_rowSpan="4">
+           <Button
+                   android:id="@+id/hit"
+                   android:layout_width="wrap_content"
+                   android:layout_height="wrap_content"
+                   android:text="HIT" />
+           <Button
+                   android:id="@+id/stand"
+                   android:layout_width="wrap_content"
+                   android:layout_height="wrap_content"
+                   android:text="STAND" />
+
+           <Button
+                   android:id="@+id/double_b"
+                   android:layout_width="wrap_content"
+                   android:layout_height="wrap_content"
+                   android:text="DOUBLE" />
+
+           <Button
+                   android:id="@+id/split"
+                   android:layout_width="wrap_content"
+                   android:layout_height="wrap_content"
+                   android:text="SPLIT" />
+       </LinearLayout>
+       </LinearLayout>
+   </GridLayout>
+
+
+</RelativeLayout>
