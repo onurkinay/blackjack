@@ -1,9 +1,11 @@
 package tr.com.onurkinay.blackjack
 
+import android.annotation.SuppressLint
 import android.support.v7.app.AppCompatActivity
 import android.os.Bundle
 import android.support.v7.app.AlertDialog
 import android.view.LayoutInflater
+import android.widget.Toast
 import kotlinx.android.synthetic.main.activity_main.*
 
 import kotlinx.android.synthetic.main.bet_dialog.view.*
@@ -18,6 +20,7 @@ class MainActivity : AppCompatActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_main)
+
         enter_bet()
     }
 
@@ -35,8 +38,8 @@ class MainActivity : AppCompatActivity() {
             if (mDialogView.dialogBetEt.text.toString() != "") {
                 //get text from EditTexts of custom layout
                 bet = mDialogView.dialogBetEt.text.toString().toInt()
-                play_a_game()
                 mAlertDialog.dismiss()
+                play_a_game()
             }else{
 
             }
@@ -49,6 +52,7 @@ class MainActivity : AppCompatActivity() {
         }
     }
 
+    @SuppressLint("SetTextI18n")
     fun play_a_game(){
         val dealer_cards = mutableListOf( random_card(), random_card() )
         val player_cards = mutableListOf( random_card(), random_card() )
@@ -68,7 +72,6 @@ class MainActivity : AppCompatActivity() {
             worth
         }
 
-
         dealer.text = dealer_cards[0] + " X"
         player.text = player_cards[0] + " "+ player_cards[1]
 
@@ -77,61 +80,61 @@ class MainActivity : AppCompatActivity() {
 
         p_status.text = "Bet: "+ bet.toString() + " -- " + p_status.text.toString()
 
-        if(dc_worth == 21) {
-            //dealer blackjack
+        if(dc_worth == 21) {//dealer blackjack
+            game_over(dc_worth, pl_worth, 0)
         }else if(dc_worth > 21){
             //dealer busted
+            game_over(dc_worth, pl_worth, 1)
         }else {
             var dc_w: Int = 0
             var pl_w: Int = 0
             hit.setOnClickListener {
-                if (dc_w == 21) {
-                    //dealer blackjack
-                } else if (dc_w > 21) {
-                    //dealer busted
-                } else {
-                    if (pl_w == 21) {
-                        //player blackjack
-                    } else if (pl_w > 21) {
-                        //player busted
-                    } else {
-                        dealer_cards += random_card()
-                        player_cards += random_card()
+              while(dc_w < 17) {
 
-                        var handDealer: String = ""
-                        var handPlayer: String = ""
+                      dealer_cards += random_card()
+                      player_cards += random_card()
 
-                        dc_w = 0
-                        pl_w = 0
+                      var handDealer: String = ""
+                      var handPlayer: String = ""
 
-                        for (card in dealer_cards) {
-                            handDealer += ("$card ")
-                            dc_w += give_worth_of_the_card(card)
-                        }
+                      dc_w = 0
+                      pl_w = 0
 
-                        for (card in player_cards) {
-                            handPlayer += ("$card ")
-                            pl_w += give_worth_of_the_card(card)
-                        }
+                      for (card in dealer_cards) {
+                          handDealer += ("$card ")
+                          dc_w += give_worth_of_the_card(card)
+                      }
 
-                        dealer.text = handDealer
-                        player.text = handPlayer
+                      for (card in player_cards) {
+                          handPlayer += ("$card ")
+                          pl_w += give_worth_of_the_card(card)
+                      }
 
-                        d_status.text = dc_w.toString()
-                        p_status.text = pl_w.toString()
+                      dealer.text = handDealer
+                      player.text = handPlayer
 
-                        p_status.text = "Bet: " + bet.toString() + " -- " + p_status.text.toString()
-                    }
+                      d_status.text = dc_w.toString()
+                      p_status.text = pl_w.toString()
+
+                      p_status.text = "Bet: " + bet.toString() + " -- " + p_status.text.toString()
+                  }
+
+                if (dc_w == 21) {//dealer blackjack
+                    game_over(dc_w, pl_w, 0)
+                } else if (dc_w > 21) {//dealer busted
+                    game_over(dc_w, pl_w, 1)
+                }else if(dc_w >= 17){
+                    game_over(dc_w, pl_w, 3)
+                }
 
                 }
-            }
+
+
             stand.setOnClickListener {
+                stand.isEnabled = false
+                double_b.isEnabled = false
                 while (dc_w < 17) {
-                    if (dc_w == 21) {
-                        //dealer blackjack
-                    } else if (dc_w > 21) {
-                        //dealer busted
-                    } else {
+
                         dealer_cards += random_card()
                         var handDealer: String = ""
                         dc_w = 0
@@ -142,11 +145,18 @@ class MainActivity : AppCompatActivity() {
                         dealer.text = handDealer
                         d_status.text = dc_w.toString()
 
+                    if (dc_w == 21) {//dealer blackjack
+                        game_over(dc_w, pl_w, 0)
+                    } else if (dc_w > 21) {//dealer busted
+                        game_over(dc_w, pl_w, 1)
                     }
                 }
             }
             double_b.setOnClickListener {
                 if(player_cards.size < 3){
+
+                    stand.isEnabled = false
+                    double_b.isEnabled = false
                 bet *= 2
                 player_cards += random_card()
                 var handPlayer: String = ""
@@ -159,23 +169,26 @@ class MainActivity : AppCompatActivity() {
                 p_status.text = "Bet: " + bet.toString() + " -- " + p_status.text.toString()
 
                 while (dc_w < 17) {
-                    if (dc_w == 21) {
-                        //dealer blackjack
-                    } else if (dc_w > 21) {
-                        //dealer busted
-                    } else {
-                        dealer_cards += random_card()
-                        var handDealer: String = ""
-                        dc_w = 0
-                        for (card in dealer_cards) {
-                            handDealer += ("$card ")
-                            dc_w += give_worth_of_the_card(card)
-                        }
-                        dealer.text = handDealer
-                        d_status.text = dc_w.toString()
 
+                    dealer_cards += random_card()
+                    var handDealer: String = ""
+                    dc_w = 0
+                    for (card in dealer_cards) {
+                        handDealer += ("$card ")
+                        dc_w += give_worth_of_the_card(card)
+                    }
+                    dealer.text = handDealer
+                    d_status.text = dc_w.toString()
+
+                    if (dc_w == 21) {//dealer blackjack
+                        game_over(dc_w, pl_w, 0)
+                    } else if (dc_w > 21) {//dealer busted
+                        game_over(dc_w, pl_w, 1)
+                    }else if(dc_w >= 17){
+                        game_over(dc_w, pl_w, 3)
                     }
                 }
+
             }
         }
         }
@@ -196,6 +209,45 @@ class MainActivity : AppCompatActivity() {
             }
         }
 
+    }
+
+    fun game_over(dc:Int, pc:Int, result: Int){
+        var status: String = ""
+        if(result == 3){
+            if(pc == 21){
+                status = "Player blackjack. You won!"
+            }
+            else if(dc > pc){
+                status = "Player won!"
+            }else status = "Dealer won!"
+        }else if(result == 4){
+            status = "Player busted! You lost"
+        }
+
+
+        val builder = AlertDialog.Builder(this)
+        builder.setTitle( if(result == 0) "Dealer Blackjack. You lost!" else if(result==1) "Dealer Busted. You Won"
+        else status )
+        builder.setMessage("New Game?")
+        //builder.setPositiveButton("OK", DialogInterface.OnClickListener(function = x))
+
+        builder.setPositiveButton(android.R.string.yes) { dialog, which ->
+            Toast.makeText(applicationContext,
+                android.R.string.yes, Toast.LENGTH_SHORT).show()
+        }
+
+        builder.setNegativeButton(android.R.string.no) { dialog, which ->
+            Toast.makeText(applicationContext,
+                android.R.string.no, Toast.LENGTH_SHORT).show()
+        }
+
+        builder.setNeutralButton("New Game") { dialog, which ->
+
+            stand.isEnabled = true
+            double_b.isEnabled = true
+            enter_bet()
+        }
+        builder.show()
     }
 }
 
