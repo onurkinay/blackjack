@@ -114,43 +114,45 @@ class MainActivity : AppCompatActivity() {
 
     fun hit() {
         double_b.isEnabled = false
-        dealer_cards.add(random_card())
-        player_cards.add(random_card())
+        if (dealer_cards.size < 5) {
+            dealer_cards.add(random_card())
+            player_cards.add(random_card())
 
-        var handDealer: String = ""
-        var handPlayer: String = ""
+            var handDealer: String = ""
+            var handPlayer: String = ""
 
-        dc_w = 0
-        pl_w = 0
+            dc_w = 0
+            pl_w = 0
 
-        for (card in dealer_cards) {
-            handDealer += ("$card ")
-            dc_w += give_worth_of_the_card(card)
+            for (card in dealer_cards) {
+                handDealer += ("$card ")
+                dc_w += give_worth_of_the_card(card)
+            }
+
+            for (card in player_cards) {
+                handPlayer += ("$card ")
+                pl_w += give_worth_of_the_card(card)
+            }
+
+            dealer.text = handDealer
+            player.text = handPlayer
+
+            d_status.text = dc_w.toString()
+            p_status.text = pl_w.toString()
+
+            p_status.text = "Bet: " + bet.toString() + " -- " + p_status.text.toString()
+
+            if (dc_w == 21) {//dealer blackjack
+                game_over(dc_w, pl_w, 0)
+            } else if (dc_w > 21) {//dealer busted
+                game_over(dc_w, pl_w, 1)
+            } else if (dc_w >= 17) {
+                game_over(dc_w, pl_w, 3)
+            } else if (pl_w >= 21) {
+                game_over(dc_w, pl_w, 3)
+            }
+            /// HIT
         }
-
-        for (card in player_cards) {
-            handPlayer += ("$card ")
-            pl_w += give_worth_of_the_card(card)
-        }
-
-        dealer.text = handDealer
-        player.text = handPlayer
-
-        d_status.text = dc_w.toString()
-        p_status.text = pl_w.toString()
-
-        p_status.text = "Bet: " + bet.toString() + " -- " + p_status.text.toString()
-
-        if (dc_w == 21) {//dealer blackjack
-            game_over(dc_w, pl_w, 0)
-        } else if (dc_w > 21) {//dealer busted
-            game_over(dc_w, pl_w, 1)
-        } else if (dc_w >= 17) {
-            game_over(dc_w, pl_w, 3)
-        } else if (pl_w >= 21) {
-            game_over(dc_w, pl_w, 3)
-        }
-        /// HIT
     }
 
     fun stand() {
