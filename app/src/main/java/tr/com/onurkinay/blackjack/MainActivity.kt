@@ -10,6 +10,7 @@ import kotlinx.android.synthetic.main.activity_main.*
 
 import kotlinx.android.synthetic.main.bet_dialog.view.*
 import java.util.Arrays
+import kotlin.random.Random
 import kotlin.system.exitProcess
 
 class MainActivity : AppCompatActivity() {
@@ -105,13 +106,11 @@ class MainActivity : AppCompatActivity() {
             //dealer busted
             game_over(dc_worth, pl_worth, 1)
         }else {
-
-
         }
     }
 
     fun hit(){
-        ///HIT
+        double_b.isEnabled = false
         dealer_cards.add(random_card())
         player_cards.add(random_card())
 
@@ -145,6 +144,8 @@ class MainActivity : AppCompatActivity() {
             game_over(dc_w, pl_w, 1)
         } else if (dc_w >= 17) {
             game_over(dc_w, pl_w, 3)
+        }else if(pl_w >= 21){
+            game_over(dc_w, pl_w, 3)
         }
         /// HIT
     }
@@ -170,7 +171,9 @@ class MainActivity : AppCompatActivity() {
                 game_over(dc_w, pl_w, 1)
             }else if(dc_w >= 17){
                 game_over(dc_w, pl_w, 3)
-            }
+            }else if(pl_w >= 21){
+            game_over(dc_w, pl_w, 3)
+        }
         }
 
     }
@@ -207,7 +210,9 @@ class MainActivity : AppCompatActivity() {
                     game_over(dc_w, pl_w, 0)
                 } else if (dc_w > 21) {//dealer busted
                     game_over(dc_w, pl_w, 1)
-                }else if(dc_w >= 17){
+                } else if (dc_w >= 17) {
+                    game_over(dc_w, pl_w, 3)
+                } else if (pl_w >= 21) {
                     game_over(dc_w, pl_w, 3)
                 }
             }
@@ -217,7 +222,7 @@ class MainActivity : AppCompatActivity() {
     }
 
     fun random_card(): String{
-        return cards[(0..13).random()]
+        return cards[Random.nextInt(0,13)]
     }
 
     fun give_worth_of_the_card(card: String): Int{
@@ -235,14 +240,15 @@ class MainActivity : AppCompatActivity() {
 
     fun game_over(dc:Int, pc:Int, result: Int){
         var status: String = ""
-        if(result == 3){
-            if(pc == 21){
+        if(result == 3) {
+            if (pc == 21) {
                 status = "Player blackjack. You won!"
-            }
-            else if(dc > pc){
+            } else if (pc > 21) status = "Player lost!"
+            else if (dc < pc) {
                 status = "Player won!"
-            }else status = "Dealer won!"
-        }else if(result == 4){
+            } else if (dc == pc) status = "Push. No one won"
+            else status = "Dealer won!"
+        }else if(result == 4) {
             status = "Player busted! You lost"
         }
 
