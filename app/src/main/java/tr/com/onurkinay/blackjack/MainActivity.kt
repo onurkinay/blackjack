@@ -17,9 +17,25 @@ class MainActivity : AppCompatActivity() {
     val cards = arrayOf("A", "2", "3", "4", "5", "6", "7", "8", "9", "10", "J", "Q", "K")
     var bet: Int = 1
     var wallet: Int = 1000
+
+    var dealer_cards: MutableList<String> = mutableListOf("")
+    var player_cards: MutableList<String> = mutableListOf("")
+
+    var dc_w: Int = 0
+    var pl_w: Int = 0
+
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_main)
+        hit.setOnClickListener {
+            hit()
+        }
+        stand.setOnClickListener{
+            stand()
+        }
+        double_b.setOnClickListener {
+            double_b()
+        }
         enter_bet()
     }
 
@@ -38,7 +54,7 @@ class MainActivity : AppCompatActivity() {
                 //get text from EditTexts of custom layout
                 bet = mDialogView.dialogBetEt.text.toString().toInt()
                 mAlertDialog.dismiss()
-                play_a_game()
+                start_a_game()
             }else{
 
             }
@@ -52,9 +68,13 @@ class MainActivity : AppCompatActivity() {
     }
 
     @SuppressLint("SetTextI18n")
-    fun play_a_game(){
-        val dealer_cards = mutableListOf( random_card(), random_card() )
-        val player_cards = mutableListOf( random_card(), random_card() )
+    fun start_a_game(){
+        dealer_cards = mutableListOf( random_card(), random_card() )
+        player_cards = mutableListOf( random_card(), random_card() )
+
+
+        dc_w = 0
+        pl_w = 0
 
         val pl_worth: Int by lazy {
             var worth: Int = 0
@@ -85,111 +105,114 @@ class MainActivity : AppCompatActivity() {
             //dealer busted
             game_over(dc_worth, pl_worth, 1)
         }else {
-            var dc_w: Int = 0
-            var pl_w: Int = 0
-            hit.setOnClickListener {
 
 
-                dealer_cards += random_card()
-                player_cards += random_card()
+        }
+    }
 
+    fun hit(){
+        ///HIT
+        dealer_cards.add(random_card())
+        player_cards.add(random_card())
+
+        var handDealer: String = ""
+        var handPlayer: String = ""
+
+        dc_w = 0
+        pl_w = 0
+
+        for (card in dealer_cards) {
+            handDealer += ("$card ")
+            dc_w += give_worth_of_the_card(card)
+        }
+
+        for (card in player_cards) {
+            handPlayer += ("$card ")
+            pl_w += give_worth_of_the_card(card)
+        }
+
+        dealer.text = handDealer
+        player.text = handPlayer
+
+        d_status.text = dc_w.toString()
+        p_status.text = pl_w.toString()
+
+        p_status.text = "Bet: " + bet.toString() + " -- " + p_status.text.toString()
+
+        if (dc_w == 21) {//dealer blackjack
+            game_over(dc_w, pl_w, 0)
+        } else if (dc_w > 21) {//dealer busted
+            game_over(dc_w, pl_w, 1)
+        } else if (dc_w >= 17) {
+            game_over(dc_w, pl_w, 3)
+        }
+        /// HIT
+    }
+
+    fun stand(){
+        stand.isEnabled = false
+        double_b.isEnabled = false
+        while (dc_w < 17) {
+
+            dealer_cards.add(random_card())
+            var handDealer: String = ""
+            dc_w = 0
+            for (card in dealer_cards) {
+                handDealer += ("$card ")
+                dc_w += give_worth_of_the_card(card)
+            }
+            dealer.text = handDealer
+            d_status.text = dc_w.toString()
+
+            if (dc_w == 21) {//dealer blackjack
+                game_over(dc_w, pl_w, 0)
+            } else if (dc_w > 21) {//dealer busted
+                game_over(dc_w, pl_w, 1)
+            }else if(dc_w >= 17){
+                game_over(dc_w, pl_w, 3)
+            }
+        }
+
+    }
+
+    fun double_b(){
+        if(player_cards.size < 3){
+
+            stand.isEnabled = false
+            double_b.isEnabled = false
+            bet *= 2
+            player_cards.add(random_card())
+            var handPlayer: String = ""
+            for (card in player_cards) {
+                handPlayer += ("$card ")
+                pl_w += give_worth_of_the_card(card)
+            }
+            player.text = handPlayer
+            p_status.text = pl_w.toString()
+            p_status.text = "Bet: " + bet.toString() + " -- " + p_status.text.toString()
+
+            while (dc_w < 17) {
+
+                dealer_cards.add(random_card())
                 var handDealer: String = ""
-                var handPlayer: String = ""
-
                 dc_w = 0
-                pl_w = 0
-
                 for (card in dealer_cards) {
                     handDealer += ("$card ")
                     dc_w += give_worth_of_the_card(card)
                 }
-
-                for (card in player_cards) {
-                    handPlayer += ("$card ")
-                    pl_w += give_worth_of_the_card(card)
-                }
-
                 dealer.text = handDealer
-                player.text = handPlayer
-
                 d_status.text = dc_w.toString()
-                p_status.text = pl_w.toString()
-
-                p_status.text = "Bet: " + bet.toString() + " -- " + p_status.text.toString()
 
                 if (dc_w == 21) {//dealer blackjack
                     game_over(dc_w, pl_w, 0)
                 } else if (dc_w > 21) {//dealer busted
                     game_over(dc_w, pl_w, 1)
-                } else if (dc_w >= 17) {
+                }else if(dc_w >= 17){
                     game_over(dc_w, pl_w, 3)
                 }
             }
 
 
-            stand.setOnClickListener {
-                stand.isEnabled = false
-                double_b.isEnabled = false
-                while (dc_w < 17) {
-
-                        dealer_cards += random_card()
-                        var handDealer: String = ""
-                        dc_w = 0
-                        for (card in dealer_cards) {
-                            handDealer += ("$card ")
-                            dc_w += give_worth_of_the_card(card)
-                        }
-                        dealer.text = handDealer
-                        d_status.text = dc_w.toString()
-
-                    if (dc_w == 21) {//dealer blackjack
-                        game_over(dc_w, pl_w, 0)
-                    } else if (dc_w > 21) {//dealer busted
-                        game_over(dc_w, pl_w, 1)
-                    }else if(dc_w >= 17){
-                        game_over(dc_w, pl_w, 3)
-                    }
-                }
-            }
-            double_b.setOnClickListener {
-                if(player_cards.size < 3){
-
-                    stand.isEnabled = false
-                    double_b.isEnabled = false
-                bet *= 2
-                player_cards += random_card()
-                var handPlayer: String = ""
-                for (card in player_cards) {
-                    handPlayer += ("$card ")
-                    pl_w += give_worth_of_the_card(card)
-                }
-                player.text = handPlayer
-                p_status.text = pl_w.toString()
-                p_status.text = "Bet: " + bet.toString() + " -- " + p_status.text.toString()
-
-                while (dc_w < 17) {
-
-                    dealer_cards += random_card()
-                    var handDealer: String = ""
-                    dc_w = 0
-                    for (card in dealer_cards) {
-                        handDealer += ("$card ")
-                        dc_w += give_worth_of_the_card(card)
-                    }
-                    dealer.text = handDealer
-                    d_status.text = dc_w.toString()
-
-                    if (dc_w == 21) {//dealer blackjack
-                        game_over(dc_w, pl_w, 0)
-                    } else if (dc_w > 21) {//dealer busted
-                        game_over(dc_w, pl_w, 1)
-                    }else if(dc_w >= 17){
-                        game_over(dc_w, pl_w, 3)
-                    }
-                }
-
-            }
-        }
         }
     }
 
