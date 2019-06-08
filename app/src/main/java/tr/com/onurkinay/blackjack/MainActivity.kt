@@ -20,7 +20,6 @@ class MainActivity : AppCompatActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_main)
-
         enter_bet()
     }
 
@@ -89,45 +88,43 @@ class MainActivity : AppCompatActivity() {
             var dc_w: Int = 0
             var pl_w: Int = 0
             hit.setOnClickListener {
-              while(dc_w < 17) {
 
-                      dealer_cards += random_card()
-                      player_cards += random_card()
 
-                      var handDealer: String = ""
-                      var handPlayer: String = ""
+                dealer_cards += random_card()
+                player_cards += random_card()
 
-                      dc_w = 0
-                      pl_w = 0
+                var handDealer: String = ""
+                var handPlayer: String = ""
 
-                      for (card in dealer_cards) {
-                          handDealer += ("$card ")
-                          dc_w += give_worth_of_the_card(card)
-                      }
+                dc_w = 0
+                pl_w = 0
 
-                      for (card in player_cards) {
-                          handPlayer += ("$card ")
-                          pl_w += give_worth_of_the_card(card)
-                      }
+                for (card in dealer_cards) {
+                    handDealer += ("$card ")
+                    dc_w += give_worth_of_the_card(card)
+                }
 
-                      dealer.text = handDealer
-                      player.text = handPlayer
+                for (card in player_cards) {
+                    handPlayer += ("$card ")
+                    pl_w += give_worth_of_the_card(card)
+                }
 
-                      d_status.text = dc_w.toString()
-                      p_status.text = pl_w.toString()
+                dealer.text = handDealer
+                player.text = handPlayer
 
-                      p_status.text = "Bet: " + bet.toString() + " -- " + p_status.text.toString()
-                  }
+                d_status.text = dc_w.toString()
+                p_status.text = pl_w.toString()
+
+                p_status.text = "Bet: " + bet.toString() + " -- " + p_status.text.toString()
 
                 if (dc_w == 21) {//dealer blackjack
                     game_over(dc_w, pl_w, 0)
                 } else if (dc_w > 21) {//dealer busted
                     game_over(dc_w, pl_w, 1)
-                }else if(dc_w >= 17){
+                } else if (dc_w >= 17) {
                     game_over(dc_w, pl_w, 3)
                 }
-
-                }
+            }
 
 
             stand.setOnClickListener {
@@ -149,6 +146,8 @@ class MainActivity : AppCompatActivity() {
                         game_over(dc_w, pl_w, 0)
                     } else if (dc_w > 21) {//dealer busted
                         game_over(dc_w, pl_w, 1)
+                    }else if(dc_w >= 17){
+                        game_over(dc_w, pl_w, 3)
                     }
                 }
             }
